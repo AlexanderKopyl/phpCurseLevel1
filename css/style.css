@@ -819,7 +819,7 @@ h2 {
 }
 
 .form__error {
-  display: none;
+  /*display: none;*/
   font-size: 11px;
   color: #f84646;
 }

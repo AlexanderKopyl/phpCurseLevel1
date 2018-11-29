@@ -1,91 +1,23 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: alexandr.kopyl
  * Date: 27.11.2018
- * Time: 11:09
+ * Time: 10:10
  */
-
-require_once 'functions.php';
-
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
-
-    $requierd_fields = ['message','lot-name','lot-step','lot-rate','category'];
-    $dict = ['message'=> 'Описание товара','lot-name' => 'Название товара','lot-step' => 'Шаг ставки', 'lot-rate' => 'Начальная цена','category' => 'Категория товара'];
-    $error = [];
-    $array_product = array();
-    $flag = false;
-
-    foreach ($requierd_fields as $field){
-        if(empty($_POST[$field])){
-
-            $error[$dict[$field]] = 'Поле не заполнено';
-            $error[$field] = 'Поле не заполнено';
-        }
-
-        if($_POST[$field] == 'Выберите категорию'){
-            $error[$field] = 'Поле не заполнено';
-        }
-
-    }
-
-    if(empty($_FILES['file']['name'])){
-        $error['file'] = 'Файл не выбран';
-
-    }
-
-    if (count($error)){
-        $form__invalid = 'form--invalid';
-
-    }else{
-
-        if(isset($_FILES['file']['name'])){
-            $uploaddir = 'img\\';
-            $uploadfile = $uploaddir . basename($_FILES['file']['name']);
-
-            move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile);
-            $tmp_name = $_FILES['file']['tmp_name'];
-            $path = $_FILES['file']['name'];
-
-// Проверка на тип файла
-//            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-//            $fileType = finfo_file($finfo,$tmp_name);
-//            if($fileType !== 'image/jpeg'){
-//                $error['file'] = 'Файл не правильно заполнин';
-//                $flag = false;
-//            }
-        }
-
-        $array_product['Name'] = $_POST['lot-name'];
-        $array_product['category'] = $_POST['category'];
-        $array_product['price'] = $_POST['lot-rate'];
-        $array_product['url'] = 'img/' . $_FILES['file']['name'];
-        $array_product['description'] = $_POST['message'];
-        $array_product['lot-step'] = $_POST['lot-step'];
-
-        $product_id = count($array_product ) - 1;
-        $flag = true;
-
-    }
-
-
-
-
-
-
-}
-
 ?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Добавление лота</title>
+    <title>DC Ply Mens 2016/2017 Snowboard</title>
     <link href="../css/normalize.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
 </head>
 <body>
-<?php if(!$flag){?>
+
 <header class="main-header">
     <div class="main-header__container container">
         <h1 class="visually-hidden">YetiCave</h1>
@@ -134,69 +66,116 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         </ul>
     </nav>
 
-    <form class="form form--add-lot container  <?php echo $form__invalid;?>" action="add-lot.php" method="post" enctype="multipart/form-data"> <!-- form--invalid -->
-        <h2>Добавление лота</h2>
-        <div class="form__container-two">
-            <div class="form__item"> <!-- form__item--invalid -->
-                <label for="lot-name">Наименование</label>
-                <input id="lot-name" type="text" name="lot-name" placeholder="Введите наименование лота" value="<?php echo $_POST['lot-name']?>">
-                <span class="form__error"><?php echo $error['lot-name']?></span>
+    <section class="lot-item container">
+        <h2><?php echo $array_product['Name']?></h2>
+        <div class="lot-item__content">
+            <div class="lot-item__left">
+                <div class="lot-item__image">
+                    <img src="<?php echo $array_product['url']?>" width="730" height="548" alt="Сноуборд">
+                </div>
+                <p class="lot-item__category">Категория: <span><?php echo $array_product['category']?></span></p>
+                <p class="lot-item__description">
+
+                    <?php if($array_product['description']) {?>
+                    <?php echo $array_product['description'];?>
+                    <?php } else {?>
+                        Легкий маневренный сноуборд, готовый дать жару в любом парке, растопив
+                        снег
+                        мощным щелчкоми четкими дугами. Стекловолокно Bi-Ax, уложенное в двух направлениях, наделяет этот
+                        снаряд
+                        отличной гибкостью и отзывчивостью, а симметричная геометрия в сочетании с классическим прогибом
+                        кэмбер
+                        позволит уверенно держать высокие скорости. А если к концу катального дня сил совсем не останется,
+                        просто
+                        посмотрите на Вашу доску и улыбнитесь, крутая графика от Шона Кливера еще никого не оставляла
+                        равнодушным.
+                    <?php }?>
+
+                </p>
             </div>
-            <div class="form__item">
-                <label for="category">Категория</label>
-                <select id="category" name="category" >
-                    <option hidden value="0">Выберите категорию</option>
-                    <option>Доски и лыжи</option>
-                    <option>Крепления</option>
-                    <option>Ботинки</option>
-                    <option>Одежда</option>
-                    <option>Инструменты</option>
-                    <option>Разное</option>
-                </select>
-                <span class="form__error"><?php echo $error['category']?></span>
-            </div>
-        </div>
-        <div class="form__item form__item--wide">
-            <label for="message">Описание</label>
-            <textarea id="message" name="message" placeholder="Напишите описание лота" ><?php echo $_POST['message']?></textarea>
-            <span class="form__error"><?php echo $error['message']?></span>
-        </div>
-        <div class="form__item form__item--file"> <!-- form__item--uploaded -->
-            <label>Изображение</label>
-            <div class="preview">
-                <button class="preview__remove" type="button">x</button>
-                <div class="preview__img">
-                    <img src="../img/avatar.jpg" width="113" height="113" alt="Изображение лота">
+            <div class="lot-item__right">
+                <div class="lot-item__state">
+                    <div class="lot-item__timer timer">
+                        10:54:12
+                    </div>
+                    <div class="lot-item__cost-state">
+                        <div class="lot-item__rate">
+                            <span class="lot-item__amount">Текущая цена</span>
+                            <span class="lot-item__cost"><?php echo $array_product['price']?></span>
+                        </div>
+                        <div class="lot-item__min-cost">
+                            Мин. ставка <span><?php echo $array_product['lot-step']?></span>
+                        </div>
+                    </div>
+                    <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post">
+                        <p class="lot-item__form-item">
+                            <label for="cost">Ваша ставка</label>
+                            <input id="cost" type="number" name="cost" placeholder="12 000">
+                        </p>
+                        <button type="submit" class="button">Сделать ставку</button>
+                    </form>
+                </div>
+                <div class="history">
+                    <h3>История ставок (<span>10</span>)</h3>
+                    <table class="history__list">
+                        <tr class="history__item">
+                            <td class="history__name">Иван</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">5 минут назад</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Константин</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">20 минут назад</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Евгений</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">Час назад</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Игорь</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 08:21</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Енакентий</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 13:20</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Семён</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 12:20</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Илья</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 10:20</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Енакентий</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 13:20</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Семён</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 12:20</td>
+                        </tr>
+                        <tr class="history__item">
+                            <td class="history__name">Илья</td>
+                            <td class="history__price">10 999 р</td>
+                            <td class="history__time">19.03.17 в 10:20</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
-            <div class="form__input-file">
-                <input class="visually-hidden" name="file" type="file" id="photo2" value="" required>
-                <label for="photo2">
-                    <span>+ Добавить</span>
-                </label>
-                <span class="form__error"><?php echo $error['file']?></span>
-            </div>
         </div>
-        <div class="form__container-three">
-            <div class="form__item form__item--small">
-                <label for="lot-rate">Начальная цена</label>
-                <input id="lot-rate" type="number" name="lot-rate" placeholder="0"  value="<?php echo $_POST['lot-rate']?>">
-                <span class="form__error"><?php echo $error['lot-rate']?></span>
-            </div>
-            <div class="form__item form__item--small">
-                <label for="lot-step">Шаг ставки</label>
-                <input id="lot-step" type="number" name="lot-step" placeholder="0" value="<?php echo $_POST['lot-step']?>">
-                <span class="form__error"><?php echo $error['lot-step']?></span>
-            </div>
-            <div class="form__item">
-                <label for="lot-date">Дата заверщения</label>
-                <input class="form__input-date" id="lot-date" type="text" name="lot-date" placeholder="20.05.2017"  value="<?php echo $_POST['lot-date']?>">
-                <span class="form__error"><?php echo $error['lot-date']?></span>
-            </div>
-        </div>
-        <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
-        <button type="submit" class="button">Добавить лот</button>
-    </form>
+    </section>
+
+
+
 
 </main>
 
@@ -262,6 +241,3 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 </body>
 </html>
-<?php } else{?>
-    <?php echo render('lot',array('array_product' => $array_product));?>
-<?php }?>
