@@ -11,6 +11,13 @@ $user_name = 'Константин';
 $user_avatar = 'img/user.jpg';
 
 
+//Данные для кук
+$ProductID = $_GET['product_id'];
+$historyProduct = array();
+$arrayHistoryProduct = json_decode($_COOKIE['historyProduct']);
+
+
+//Данные для времени
 date_default_timezone_set('Europe/Moscow');
 
 $ts = time();

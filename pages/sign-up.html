@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Регистрация</title>
-  <link href="../css/normalize.min.css" rel="stylesheet">
-  <link href="../css/style.css" rel="stylesheet">
+  <link href="css/normalize.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
 
@@ -12,7 +12,7 @@
   <div class="main-header__container container">
     <h1 class="visually-hidden">YetiCave</h1>
     <a class="main-header__logo" href="index.html">
-      <img src="../img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
+      <img src="img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
     </a>
     <form class="main-header__search" method="get" action="https://echo.htmlacademy.ru">
       <input type="search" name="search" placeholder="Поиск лота">
@@ -25,7 +25,7 @@
           <a href="sign-up.html">Регистрация</a>
         </li>
         <li class="user-menu__item">
-          <a href="#">Вход</a>
+          <a href="login.html">Вход</a>
         </li>
       </ul>
     </nav>
@@ -60,29 +60,29 @@
     <div class="form__item"> <!-- form__item--invalid -->
       <label for="email">E-mail*</label>
       <input id="email" type="text" name="email" placeholder="Введите e-mail" required>
-      <span class="form__error"></span>
+      <span class="form__error">Введите e-mail</span>
     </div>
     <div class="form__item">
       <label for="password">Пароль*</label>
       <input id="password" type="text" name="password" placeholder="Введите пароль" required>
-      <span class="form__error"></span>
+      <span class="form__error">Введите пароль</span>
     </div>
     <div class="form__item">
       <label for="name">Имя*</label>
       <input id="name" type="text" name="name" placeholder="Введите имя" required>
-      <span class="form__error"></span>
+      <span class="form__error">Введите имя</span>
     </div>
     <div class="form__item">
       <label for="message">Контактные данные*</label>
       <textarea id="message" name="message" placeholder="Напишите как с вами связаться" required></textarea>
-      <span class="form__error"></span>
+      <span class="form__error">Напишите как с вами связаться</span>
     </div>
     <div class="form__item form__item--file form__item--last">
-      <label>Изображение</label>
+      <label>Аватар</label>
       <div class="preview">
         <button class="preview__remove" type="button">x</button>
         <div class="preview__img">
-          <img src="../img/avatar.jpg" width="113" height="113" alt="Изображение лота">
+          <img src="img/avatar.jpg" width="113" height="113" alt="Ваш аватар">
         </div>
       </div>
       <div class="form__input-file">

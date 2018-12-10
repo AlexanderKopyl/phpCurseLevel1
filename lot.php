@@ -7,6 +7,19 @@ require_once 'data.php';
  * Date: 27.11.2018
  * Time: 10:10
  */
+
+session_start();
+
+if (isset($_COOKIE['historyProduct'])) {
+        if(!in_array("$ProductID", $arrayHistoryProduct)){
+            array_push($arrayHistoryProduct, $ProductID);
+            setcookie('historyProduct', json_encode($arrayHistoryProduct));
+        }
+
+} else {
+    $historyProduct[] = $ProductID;
+    setcookie('historyProduct', json_encode($historyProduct));
+}
 ?>
 
 <!DOCTYPE html>
@@ -29,16 +42,26 @@ require_once 'data.php';
             <input type="search" name="search" placeholder="Поиск лота">
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
-        <a class="main-header__add-lot button" href="add-lot.html">Добавить лот</a>
+
         <nav class="user-menu">
-            <ul class="user-menu__list">
-                <li class="user-menu__item">
-                    <a href="sign-up.html">Регистрация</a>
-                </li>
-                <li class="user-menu__item">
-                    <a href="#">Вход</a>
-                </li>
-            </ul>
+            <?php if(isset($_SESSION['is_auth'])):?>
+                <a class="main-header__add-lot button" href="add-lot.php">Добавить лот</a>
+                <div class="user-menu_image">
+                    <img src="<?php echo $user_avatar; ?>" width="40"  height="40" alt="Пользователь">
+                </div>
+                <div class="user-menu_logged">
+                    <p><?php echo $user_name;?></p>
+                </div>
+            <?php else:?>
+                <ul class="user-menu__list">
+                    <li class="user-menu__item">
+                        <a href="sign-up.php">Регистрация</a>
+                    </li>
+                    <li class="user-menu__item">
+                        <a href="login.php">Вход</a>
+                    </li>
+                </ul>
+            <?php endif;?>
         </nav>
     </div>
 </header>
@@ -95,27 +118,29 @@ require_once 'data.php';
                 </p>
             </div>
             <div class="lot-item__right">
-                <div class="lot-item__state">
-                    <div class="lot-item__timer timer">
-                        10:54:12
-                    </div>
-                    <div class="lot-item__cost-state">
-                        <div class="lot-item__rate">
-                            <span class="lot-item__amount">Текущая цена</span>
-                            <span class="lot-item__cost"><?php echo formatSumm($array_product[$_GET['product_id']]['price'])?></span>
+                <?php if(isset($_SESSION['is_auth'])):?>
+                    <div class="lot-item__state">
+                        <div class="lot-item__timer timer">
+                            10:54:12
                         </div>
-                        <div class="lot-item__min-cost">
-                            Мин. ставка <span>12 000 р</span>
+                        <div class="lot-item__cost-state">
+                            <div class="lot-item__rate">
+                                <span class="lot-item__amount">Текущая цена</span>
+                                <span class="lot-item__cost"><?php echo formatSumm($array_product[$_GET['product_id']]['price'])?></span>
+                            </div>
+                            <div class="lot-item__min-cost">
+                                Мин. ставка <span>12 000 р</span>
+                            </div>
                         </div>
+                        <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post">
+                            <p class="lot-item__form-item">
+                                <label for="cost">Ваша ставка</label>
+                                <input id="cost" type="number" name="cost" placeholder="12 000">
+                            </p>
+                            <button type="submit" class="button">Сделать ставку</button>
+                        </form>
                     </div>
-                    <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post">
-                        <p class="lot-item__form-item">
-                            <label for="cost">Ваша ставка</label>
-                            <input id="cost" type="number" name="cost" placeholder="12 000">
-                        </p>
-                        <button type="submit" class="button">Сделать ставку</button>
-                    </form>
-                </div>
+                <?php endif;?>
                 <div class="history">
                     <h3>История ставок (<span>10</span>)</h3>
                     <table class="history__list">

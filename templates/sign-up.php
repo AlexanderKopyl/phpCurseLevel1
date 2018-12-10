@@ -1,114 +1,31 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: alexandr.kopyl
- * Date: 27.11.2018
- * Time: 11:09
- */
-session_start();
-if(!isset($_SESSION['is_auth'])){
-    header('HTTP/1.1 403 Forbidden');
-    exit;
-
-}
-require_once 'functions.php';
-
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
-
-    $requierd_fields = ['message','lot-name','lot-step','lot-rate','category'];
-    $dict = ['message'=> 'Описание товара','lot-name' => 'Название товара','lot-step' => 'Шаг ставки', 'lot-rate' => 'Начальная цена','category' => 'Категория товара'];
-    $error = [];
-    $array_product = array();
-    $flag = false;
-
-    foreach ($requierd_fields as $field){
-        if(empty($_POST[$field])){
-
-            $error[$dict[$field]] = 'Поле не заполнено';
-            $error[$field] = 'Поле не заполнено';
-        }
-
-        if($_POST[$field] == 'Выберите категорию'){
-            $error[$field] = 'Поле не заполнено';
-        }
-
-    }
-
-    if(empty($_FILES['file']['name'])){
-        $error['file'] = 'Файл не выбран';
-
-    }
-
-    if (count($error)){
-        $form__invalid = 'form--invalid';
-
-    }else{
-
-        if(isset($_FILES['file']['name'])){
-            $uploaddir = 'img\\';
-            $uploadfile = $uploaddir . basename($_FILES['file']['name']);
-
-            move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile);
-            $tmp_name = $_FILES['file']['tmp_name'];
-            $path = $_FILES['file']['name'];
-
-// Проверка на тип файла
-//            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-//            $fileType = finfo_file($finfo,$tmp_name);
-//            if($fileType !== 'image/jpeg'){
-//                $error['file'] = 'Файл не правильно заполнин';
-//                $flag = false;
-//            }
-        }
-
-        $array_product['Name'] = $_POST['lot-name'];
-        $array_product['category'] = $_POST['category'];
-        $array_product['price'] = $_POST['lot-rate'];
-        $array_product['url'] = 'img/' . $_FILES['file']['name'];
-        $array_product['description'] = $_POST['message'];
-        $array_product['lot-step'] = $_POST['lot-step'];
-
-        $product_id = count($array_product ) - 1;
-        $flag = true;
-
-    }
-
-
-
-
-
-
-}
-
-?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Добавление лота</title>
-    <link href="../css/normalize.min.css" rel="stylesheet">
-    <link href="../css/style.css" rel="stylesheet">
+    <title>Регистрация</title>
+    <link href="css/normalize.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
-<?php if(!$flag){?>
+
 <header class="main-header">
     <div class="main-header__container container">
         <h1 class="visually-hidden">YetiCave</h1>
         <a class="main-header__logo" href="index.php">
-            <img src="../img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
+            <img src="img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
         </a>
         <form class="main-header__search" method="get" action="https://echo.htmlacademy.ru">
             <input type="search" name="search" placeholder="Поиск лота">
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
-        <a class="main-header__add-lot button" href="add-lot.html">Добавить лот</a>
+        <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
         <nav class="user-menu">
             <ul class="user-menu__list">
                 <li class="user-menu__item">
-                    <a href="sign-up.html">Регистрация</a>
+                    <a href="sign-up.php">Регистрация</a>
                 </li>
                 <li class="user-menu__item">
-                    <a href="#">Вход</a>
+                    <a href="login.php">Вход</a>
                 </li>
             </ul>
         </nav>
@@ -138,71 +55,47 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             </li>
         </ul>
     </nav>
-
-    <form class="form form--add-lot container  <?php echo $form__invalid;?>" action="add-lot.php" method="post" enctype="multipart/form-data"> <!-- form--invalid -->
-        <h2>Добавление лота</h2>
-        <div class="form__container-two">
-            <div class="form__item"> <!-- form__item--invalid -->
-                <label for="lot-name">Наименование</label>
-                <input id="lot-name" type="text" name="lot-name" placeholder="Введите наименование лота" value="<?php echo $_POST['lot-name']?>">
-                <span class="form__error"><?php echo $error['lot-name']?></span>
-            </div>
-            <div class="form__item">
-                <label for="category">Категория</label>
-                <select id="category" name="category" >
-                    <option hidden value="0">Выберите категорию</option>
-                    <option>Доски и лыжи</option>
-                    <option>Крепления</option>
-                    <option>Ботинки</option>
-                    <option>Одежда</option>
-                    <option>Инструменты</option>
-                    <option>Разное</option>
-                </select>
-                <span class="form__error"><?php echo $error['category']?></span>
-            </div>
+    <form class="form container" action="https://echo.htmlacademy.ru" method="post"> <!-- form--invalid -->
+        <h2>Регистрация нового аккаунта</h2>
+        <div class="form__item"> <!-- form__item--invalid -->
+            <label for="email">E-mail*</label>
+            <input id="email" type="text" name="email" placeholder="Введите e-mail" required>
+            <span class="form__error">Введите e-mail</span>
         </div>
-        <div class="form__item form__item--wide">
-            <label for="message">Описание</label>
-            <textarea id="message" name="message" placeholder="Напишите описание лота" ><?php echo $_POST['message']?></textarea>
-            <span class="form__error"><?php echo $error['message']?></span>
+        <div class="form__item">
+            <label for="password">Пароль*</label>
+            <input id="password" type="text" name="password" placeholder="Введите пароль" required>
+            <span class="form__error">Введите пароль</span>
         </div>
-        <div class="form__item form__item--file"> <!-- form__item--uploaded -->
-            <label>Изображение</label>
+        <div class="form__item">
+            <label for="name">Имя*</label>
+            <input id="name" type="text" name="name" placeholder="Введите имя" required>
+            <span class="form__error">Введите имя</span>
+        </div>
+        <div class="form__item">
+            <label for="message">Контактные данные*</label>
+            <textarea id="message" name="message" placeholder="Напишите как с вами связаться" required></textarea>
+            <span class="form__error">Напишите как с вами связаться</span>
+        </div>
+        <div class="form__item form__item--file form__item--last">
+            <label>Аватар</label>
             <div class="preview">
                 <button class="preview__remove" type="button">x</button>
                 <div class="preview__img">
-                    <img src="../img/avatar.jpg" width="113" height="113" alt="Изображение лота">
+                    <img src="img/avatar.jpg" width="113" height="113" alt="Ваш аватар">
                 </div>
             </div>
             <div class="form__input-file">
-                <input class="visually-hidden" name="file" type="file" id="photo2" value="" required>
+                <input class="visually-hidden" type="file" id="photo2" value="">
                 <label for="photo2">
                     <span>+ Добавить</span>
                 </label>
-                <span class="form__error"><?php echo $error['file']?></span>
-            </div>
-        </div>
-        <div class="form__container-three">
-            <div class="form__item form__item--small">
-                <label for="lot-rate">Начальная цена</label>
-                <input id="lot-rate" type="number" name="lot-rate" placeholder="0"  value="<?php echo $_POST['lot-rate']?>">
-                <span class="form__error"><?php echo $error['lot-rate']?></span>
-            </div>
-            <div class="form__item form__item--small">
-                <label for="lot-step">Шаг ставки</label>
-                <input id="lot-step" type="number" name="lot-step" placeholder="0" value="<?php echo $_POST['lot-step']?>">
-                <span class="form__error"><?php echo $error['lot-step']?></span>
-            </div>
-            <div class="form__item">
-                <label for="lot-date">Дата заверщения</label>
-                <input class="form__input-date" id="lot-date" type="text" name="lot-date" placeholder="20.05.2017"  value="<?php echo $_POST['lot-date']?>">
-                <span class="form__error"><?php echo $error['lot-date']?></span>
             </div>
         </div>
         <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
-        <button type="submit" class="button">Добавить лот</button>
+        <button type="submit" class="button">Зарегистрироваться</button>
+        <a class="text-link" href="#">Уже есть аккаунт</a>
     </form>
-
 </main>
 
 <footer class="main-footer">
@@ -267,6 +160,3 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 </body>
 </html>
-<?php } else{?>
-    <?php echo render('lot',array('array_product' => $array_product));?>
-<?php }?>

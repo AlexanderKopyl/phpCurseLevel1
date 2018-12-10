@@ -5,6 +5,7 @@
  * Date: 23.11.2018
  * Time: 16:44
  */
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -26,24 +27,27 @@
             <input type="search" name="search" placeholder="Поиск лота">
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
-        <a class="main-header__add-lot button" href="add-lot.php">Добавить лот</a>
 
         <nav class="user-menu">
             <!-- здесь должен быть PHP код для показа аватара пользователя -->
-        <?php if($is_auth == true):?>
+        <?php if(isset($_SESSION['is_auth'])):?>
+            <a class="main-header__add-lot button" href="add-lot.php">Добавить лот</a>
             <div class="user-menu_image">
                 <img src="<?php echo $user_avatar; ?>" width="40"  height="40" alt="Пользователь">
             </div>
             <div class="user-menu_logged">
-                <p><?php echo $user_name;?></p>
+                <p><?php echo $user_name;?>
+                    <a href="logout.php">Выход</a>
+                </p>
+
             </div>
         <?php else:?>
                 <ul class="user-menu__list">
                     <li class="user-menu__item">
-                        <a href="sign-up.html">Регистрация</a>
+                        <a href="sign-up.php">Регистрация</a>
                     </li>
                     <li class="user-menu__item">
-                        <a href="#">Вход</a>
+                        <a href="login.php">Вход</a>
                     </li>
                 </ul>
         <?php endif;?>
