@@ -8,5 +8,6 @@
 session_start();
 
 require_once "functions.php";
+require_once "data.php";
 
-echo render('sign-up',array());
+echo render('sign-up', array('user_name' => $user_name, 'user_avatar' => $user_avatar,'userEmailFromDB' => $userEmailFromDB));

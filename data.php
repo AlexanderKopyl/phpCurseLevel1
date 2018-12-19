@@ -6,11 +6,17 @@
  * Time: 10:14
  */
 
+require_once "db.php";
+
 $is_auth = (bool) rand(0, 1);
 $user_name = 'Константин';
 $user_avatar = 'img/user.jpg';
 
+$userEmailFromDB = $pdo->query('SELECT email FROM user');
 
+$array_category  = $pdo->query('SELECT title FROM category');
+$array_product = $pdo->query('SELECT * FROM product');
+$rate = $pdo->query('SELECT * FROM rate');
 //Данные для кук
 $ProductID = $_GET['product_id'];
 $historyProduct = array();
@@ -26,7 +32,7 @@ $toNextday = $ny_date - $ts;
 $timeToEnd = date("H:i:s", mktime(0, 0, $toNextday));
 
 
-$array_category = array("Доски и лыжи","Крепления","Ботинки","Одежда","Инструменты","Разное");
+//$array_category = array("Доски и лыжи","Крепления","Ботинки","Одежда","Инструменты","Разное");
 $array_product = array(
     array("Name" => "2014 Rossignol District Snowboard", "category" => "Доски лыжи", "price" => 1099, "url" => "img/lot-1.jpg"),
     array("Name" => "DC Ply Mens 2016/2017 Snowboard", "category" => "Доски лыжи", "price" => 159999, "url" => "img/lot-2.jpg"),

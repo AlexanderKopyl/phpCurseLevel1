@@ -1,3 +1,12 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: alexandr.kopyl
+ * Date: 18.12.2018
+ * Time: 16:27
+ */
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5,6 +14,7 @@
     <title>Регистрация</title>
     <link href="css/normalize.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -18,16 +28,31 @@
             <input type="search" name="search" placeholder="Поиск лота">
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
-        <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
+        <?php if(isset($_SESSION['is_auth'])):?>
+            <a class="main-header__add-lot button" href="add-lot.php">Добавить лот</a>
+        <?php endif;?>
         <nav class="user-menu">
-            <ul class="user-menu__list">
-                <li class="user-menu__item">
-                    <a href="sign-up.php">Регистрация</a>
-                </li>
-                <li class="user-menu__item">
-                    <a href="login.php">Вход</a>
-                </li>
-            </ul>
+            <?php if(isset($_SESSION['is_auth'])):?>
+                <a class="main-header__add-lot button" href="add-lot.php">Добавить лот</a>
+                <div class="user-menu_image">
+                    <img src="<?php echo $user_avatar; ?>" width="40"  height="40" alt="Пользователь">
+                </div>
+                <div class="user-menu_logged">
+                    <p><?php echo $user_name;?>
+                        <a href="logout.php">Выход</a>
+                    </p>
+
+                </div>
+            <?php else:?>
+                <ul class="user-menu__list">
+                    <li class="user-menu__item">
+                        <a href="sign-up.php">Регистрация</a>
+                    </li>
+                    <li class="user-menu__item">
+                        <a href="login.php">Вход</a>
+                    </li>
+                </ul>
+            <?php endif;?>
         </nav>
     </div>
 </header>
@@ -55,27 +80,28 @@
             </li>
         </ul>
     </nav>
-    <form class="form container" action="https://echo.htmlacademy.ru" method="post"> <!-- form--invalid -->
+    <form class="form container <?php echo $form__invalid;?>" action="register.php" method="POST" enctype="multipart/form-data" id="uploadImages"> <!-- form--invalid -->
         <h2>Регистрация нового аккаунта</h2>
         <div class="form__item"> <!-- form__item--invalid -->
             <label for="email">E-mail*</label>
-            <input id="email" type="text" name="email" placeholder="Введите e-mail" required>
-            <span class="form__error">Введите e-mail</span>
+            <input id="email" type="text" name="email" placeholder="Введите e-mail" value="<?php echo $_POST['email']?>" required>
+            <span class="form__error"><?php echo $error['email'];?></span>
+            <span class="form__error"><?php echo $error['emailExist'];?></span>
         </div>
         <div class="form__item">
             <label for="password">Пароль*</label>
-            <input id="password" type="text" name="password" placeholder="Введите пароль" required>
-            <span class="form__error">Введите пароль</span>
+            <input id="password" type="text" name="password" placeholder="Введите пароль" value="<?php echo $_POST['password']?>" required>
+            <span class="form__error"><?php echo $error['password'];?></span>
         </div>
         <div class="form__item">
             <label for="name">Имя*</label>
-            <input id="name" type="text" name="name" placeholder="Введите имя" required>
-            <span class="form__error">Введите имя</span>
+            <input id="name" type="text" name="name" placeholder="Введите имя" value="<?php echo $_POST['name']?>" required>
+            <span class="form__error"><?php echo $error['name'];?></span>
         </div>
         <div class="form__item">
             <label for="message">Контактные данные*</label>
-            <textarea id="message" name="message" placeholder="Напишите как с вами связаться" required></textarea>
-            <span class="form__error">Напишите как с вами связаться</span>
+            <textarea id="message" name="message" placeholder="Напишите как с вами связаться" required><?php echo $_POST['message']?></textarea>
+            <span class="form__error"><?php echo $error['message'];?></span>
         </div>
         <div class="form__item form__item--file form__item--last">
             <label>Аватар</label>
@@ -85,8 +111,15 @@
                     <img src="img/avatar.jpg" width="113" height="113" alt="Ваш аватар">
                 </div>
             </div>
-            <div class="form__input-file">
-                <input class="visually-hidden" type="file" id="photo2" value="">
+            <div class="form__input-file" id="uploadImagesList">
+<!--                <span class="form__error">--><?php //echo $msgForimg;?><!--</span>-->
+                <input class="visually-hidden" name="file"  type="file" id="photo2" value="">
+                <div class="item template">
+                    <span class="img-wrap">
+                        <img src="image.jpg" alt="">
+                    </span>
+                </div>
+
                 <label for="photo2">
                     <span>+ Добавить</span>
                 </label>
@@ -144,7 +177,9 @@
                 <svg width="27" height="27" viewBox="0 0 27 27" xmlns="http://www.w3.org/2000/svg"><circle stroke="#879296" fill="none" cx="13.5" cy="13.5" r="12.666"/><path fill="#879296" d="M13.92 18.07c.142-.016.278-.074.39-.166.077-.107.118-.237.116-.37 0 0 0-1.13.516-1.296.517-.165 1.208 1.09 1.95 1.58.276.213.624.314.973.28h1.95s.973-.057.525-.837c-.38-.62-.865-1.17-1.432-1.626-1.208-1.1-1.043-.916.41-2.816.886-1.16 1.236-1.86 1.13-2.163-.108-.302-.76-.214-.76-.214h-2.164c-.092-.026-.19-.026-.282 0-.083.058-.15.135-.195.225-.224.57-.49 1.125-.8 1.656-.973 1.61-1.344 1.697-1.51 1.59-.37-.234-.272-.975-.272-1.433 0-1.56.243-2.202-.468-2.377-.32-.075-.647-.108-.974-.098-.604-.052-1.213.01-1.793.186-.243.116-.438.38-.32.4.245.018.474.13.642.31.152.303.225.638.214.975 0 0 .127 1.832-.302 2.056-.43.223-.692-.167-1.55-1.618-.29-.506-.547-1.03-.77-1.57-.038-.09-.098-.17-.174-.233-.1-.065-.214-.108-.332-.128H6.485s-.312 0-.42.137c-.106.135 0 .36 0 .36.87 2 2.022 3.868 3.42 5.543.923.996 2.21 1.573 3.567 1.598z"/></svg>
             </a>
         </div>
-        <a class="main-footer__add-lot button" href="add-lot.html">Добавить лот</a>
+        <?php if(isset($_SESSION['is_auth'])):?>
+            <a class="main-header__add-lot button" href="add-lot.php">Добавить лот</a>
+        <?php endif;?>
         <div class="main-footer__developed-by">
             <span class="visually-hidden">Разработано:</span>
             <a class="logo-academy" href="https://htmlacademy.ru/intensive/php">HTML Academy
@@ -157,6 +192,97 @@
         </div>
     </div>
 </footer>
+<script>
+    $(document).ready(function ($) {
 
+        var maxFileSize = 2 * 1024 * 1024; // (байт) Максимальный размер файла (2мб)
+        var queue = {};
+        var form = $('form#uploadImages');
+        var imagesList = $('#uploadImagesList');
+
+        var itemPreviewTemplate = imagesList.find('.item.template');
+        itemPreviewTemplate.removeClass('template');
+        imagesList.find('.item.template').remove();
+
+
+        $('#photo2').on('change', function () {
+            var files = this.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                if ( !file.type.match(/image\/(jpeg|jpg|png|gif)/) ) {
+                    alert( 'Фотография должна быть в формате jpg, png или gif' );
+                    continue;
+                }
+
+                if ( file.size > maxFileSize ) {
+                    alert( 'Размер фотографии не должен превышать 2 Мб' );
+                    continue;
+                }
+
+                preview(files[i]);
+            }
+
+            this.value = '';
+        });
+
+        // Создание превью
+        function preview(file) {
+            var reader = new FileReader();
+            reader.addEventListener('load', function(event) {
+                var img = document.createElement('img');
+
+                var itemPreview = itemPreviewTemplate;
+
+                itemPreview.find('.img-wrap img').attr('src', event.target.result);
+                itemPreview.data('id', file.name);
+
+                imagesList.append(itemPreview);
+
+                queue[file.name] = file;
+
+            });
+            reader.readAsDataURL(file);
+        }
+
+        // Удаление фотографий
+        imagesList.on('click', '.delete-link', function () {
+            var item = $(this).closest('.item'),
+                id = item.data('id');
+
+            delete queue[id];
+
+            item.remove();
+        });
+
+
+        // Отправка формы
+        form.on('submit', function(event) {
+
+            var formData = new FormData(this);
+
+            for (var id in queue) {
+                formData.append('images[]', queue[id]);
+            }
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                async: true,
+                success: function (res) {
+                    alert(res)
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+
+            return false;
+        });
+
+    });
+</script>
 </body>
 </html>

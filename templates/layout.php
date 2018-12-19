@@ -27,11 +27,13 @@ session_start();
             <input type="search" name="search" placeholder="Поиск лота">
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
-
+        <?php if(isset($_SESSION['is_auth'])):?>
+            <a class="main-header__add-lot button" href="add-lot.php">Добавить лот</a>
+        <?php endif;?>
         <nav class="user-menu">
             <!-- здесь должен быть PHP код для показа аватара пользователя -->
         <?php if(isset($_SESSION['is_auth'])):?>
-            <a class="main-header__add-lot button" href="add-lot.php">Добавить лот</a>
+
             <div class="user-menu_image">
                 <img src="<?php echo $user_avatar; ?>" width="40"  height="40" alt="Пользователь">
             </div>
